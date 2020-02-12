@@ -1,0 +1,10 @@
+{
+    "parent": "minecraft:block/stonecutter",
+    "textures": {
+        "particle": "glasscutter:block/glasscutter_bottom",
+        "bottom": "glasscutter:block/glasscutter_bottom",
+        "top": "glasscutter:block/glasscutter_top",
+        "side": "glasscutter:block/glasscutter_side",
+        "saw": "glasscutter:block/glasscutter_saw"
+    }
+}

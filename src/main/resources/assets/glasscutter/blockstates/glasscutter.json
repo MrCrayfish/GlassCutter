@@ -1,0 +1,19 @@
+{
+    "variants": {
+        "facing=north": {
+            "model": "glasscutter:block/glasscutter"
+        },
+        "facing=south": {
+            "model": "glasscutter:block/glasscutter",
+            "y": 180
+        },
+        "facing=west": {
+            "model": "glasscutter:block/glasscutter",
+            "y": 270
+        },
+        "facing=east": {
+            "model": "glasscutter:block/glasscutter",
+            "y": 90
+        }
+    }
+}

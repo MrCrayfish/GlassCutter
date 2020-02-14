@@ -1,9 +1,8 @@
 package com.mrcrayfish.glasscutter.init;
 
 import com.mrcrayfish.glasscutter.Reference;
-import com.mrcrayfish.glasscutter.block.GlassCutterBlock;
+import com.mrcrayfish.glasscutter.block.GlasscutterBlock;
 import net.minecraft.block.Block;
-import net.minecraft.block.StonecutterBlock;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -26,7 +25,7 @@ public class ModBlocks
     private static final List<Block> BLOCKS = new ArrayList<>();
     private static final List<Item> ITEMS = new ArrayList<>();
 
-    public static final Block GLASS_CUTTER = register(new ResourceLocation(Reference.MOD_ID, "glasscutter"), new GlassCutterBlock(Block.Properties.create(Material.ROCK).hardnessAndResistance(3.5F)));
+    public static final Block GLASSCUTTER = register(new ResourceLocation(Reference.MOD_ID, "glasscutter"), new GlasscutterBlock(Block.Properties.create(Material.ROCK).hardnessAndResistance(3.5F)));
 
     private static Block register(ResourceLocation key, Block block)
     {

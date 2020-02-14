@@ -1,5 +1,6 @@
 package com.mrcrayfish.glasscutter.block;
 
+import com.mrcrayfish.glasscutter.inventory.container.GlasscutterContainer;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockRenderType;
 import net.minecraft.block.BlockState;
@@ -7,12 +8,10 @@ import net.minecraft.block.HorizontalBlock;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.container.INamedContainerProvider;
 import net.minecraft.inventory.container.SimpleNamedContainerProvider;
-import net.minecraft.inventory.container.StonecutterContainer;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.pathfinding.PathType;
 import net.minecraft.state.DirectionProperty;
 import net.minecraft.state.StateContainer;
-import net.minecraft.stats.Stats;
 import net.minecraft.util.*;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
@@ -27,13 +26,13 @@ import javax.annotation.Nullable;
 /**
  * Author: MrCrayfish
  */
-public class GlassCutterBlock extends Block
+public class GlasscutterBlock extends Block
 {
     private static final TranslationTextComponent CONTAINER_TITLE = new TranslationTextComponent("container.glasscutter.glasscutter");
     public static final DirectionProperty DIRECTION = HorizontalBlock.HORIZONTAL_FACING;
     protected static final VoxelShape SHAPE = Block.makeCuboidShape(0.0D, 0.0D, 0.0D, 16.0D, 9.0D, 16.0D);
 
-    public GlassCutterBlock(Properties properties)
+    public GlasscutterBlock(Properties properties)
     {
         super(properties);
         this.setDefaultState(this.stateContainer.getBaseState().with(DIRECTION, Direction.NORTH));
@@ -46,12 +45,11 @@ public class GlassCutterBlock extends Block
     }
 
     @Override
-    public ActionResultType func_225533_a_(BlockState state, World world, BlockPos pos, PlayerEntity playerEntity, Hand hand, BlockRayTraceResult result)
+    public ActionResultType onBlockActivated(BlockState state, World world, BlockPos pos, PlayerEntity playerEntity, Hand hand, BlockRayTraceResult result)
     {
         if(!world.isRemote)
         {
             playerEntity.openContainer(state.getContainer(world, pos));
-            playerEntity.addStat(Stats.INTERACT_WITH_STONECUTTER);
         }
         return ActionResultType.SUCCESS;
     }
@@ -61,7 +59,7 @@ public class GlassCutterBlock extends Block
     public INamedContainerProvider getContainer(BlockState state, World world, BlockPos pos)
     {
         return new SimpleNamedContainerProvider((windowId, playerInventory, playerEntity) -> {
-            return new StonecutterContainer(windowId, playerInventory, IWorldPosCallable.of(world, pos));
+            return new GlasscutterContainer(windowId, playerInventory, IWorldPosCallable.of(world, pos));
         }, CONTAINER_TITLE);
     }
 
@@ -72,7 +70,7 @@ public class GlassCutterBlock extends Block
     }
 
     @Override
-    public boolean func_220074_n(BlockState state)
+    public boolean isTransparent(BlockState state)
     {
         return true;
     }

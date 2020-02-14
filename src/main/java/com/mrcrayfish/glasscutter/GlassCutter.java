@@ -1,5 +1,6 @@
 package com.mrcrayfish.glasscutter;
 
+import com.mrcrayfish.glasscutter.client.ClientHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;

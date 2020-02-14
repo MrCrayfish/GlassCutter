@@ -1,0 +1,13 @@
+{
+    "variants": {
+        "type=bottom": {
+            "model": "glasscutter:block/white_stained_glass_slab"
+        },
+        "type=top": {
+            "model": "glasscutter:block/white_stained_glass_slab_top"
+        },
+        "type=double": {
+            "model": "minecraft:block/white_stained_glass"
+        }
+    }
+}

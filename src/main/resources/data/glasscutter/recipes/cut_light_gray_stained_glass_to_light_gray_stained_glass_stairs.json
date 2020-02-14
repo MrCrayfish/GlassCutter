@@ -1,0 +1,8 @@
+{
+    "type": "glasscutter:glasscutting",
+    "ingredient": {
+        "item": "minecraft:light_gray_stained_glass"
+    },
+    "result": "glasscutter:light_gray_stained_glass_stairs",
+    "count": 1
+}

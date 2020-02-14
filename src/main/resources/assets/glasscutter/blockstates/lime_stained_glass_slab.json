@@ -1,0 +1,13 @@
+{
+    "variants": {
+        "type=bottom": {
+            "model": "glasscutter:block/lime_stained_glass_slab"
+        },
+        "type=top": {
+            "model": "glasscutter:block/lime_stained_glass_slab_top"
+        },
+        "type=double": {
+            "model": "minecraft:block/lime_stained_glass"
+        }
+    }
+}

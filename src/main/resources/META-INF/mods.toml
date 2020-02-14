@@ -1,7 +1,7 @@
 modLoader="javafml"
 loaderVersion="[31,)"
 
-issueTrackerURL=""
+issueTrackerURL="https://github.com/MrCrayfish/GlassCutter/issues"
 
 [[mods]]
 modId="glasscutter"

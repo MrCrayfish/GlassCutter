@@ -5,7 +5,7 @@ issueTrackerURL="https://github.com/MrCrayfish/GlassCutter/issues"
 
 [[mods]]
 modId="glasscutter"
-version="1.0.0"
+version="1.0.1"
 displayName="Glasscutter"
 updateJSONURL="https://raw.githubusercontent.com/MrCrayfish/ModUpdates/master/glasscutter/update.json"
 displayURL="https://mrcrayfish.com/mods?id=glasscutter"

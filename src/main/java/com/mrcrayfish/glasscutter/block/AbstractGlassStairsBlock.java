@@ -29,6 +29,7 @@ public class AbstractGlassStairsBlock extends StairsBlock
         return true;
     }
 
+    // Help, what should I use instead???!
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean isSideInvisible(BlockState state, BlockState adjacentState, Direction side)
@@ -47,6 +48,7 @@ public class AbstractGlassStairsBlock extends StairsBlock
         return super.isSideInvisible(state, adjacentState, side);
     }
 
+    // Help, what should I use instead???!
     @Override
     @OnlyIn(Dist.CLIENT)
     public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos)

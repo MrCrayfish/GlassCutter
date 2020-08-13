@@ -17,12 +17,12 @@ description='Adds a glasscutter to cut different shapes with glass'
 [[dependencies.improvedwolves]]
     modId="forge"
     mandatory=true
-    versionRange="[31,)"
+    versionRange="[32,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.improvedwolves]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.15.2,1.16)"
+    versionRange="[1.16.1]"
     ordering="NONE"
     side="BOTH"

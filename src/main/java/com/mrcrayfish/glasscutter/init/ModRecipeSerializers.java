@@ -19,6 +19,7 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModRecipeSerializers
 {
+    @SuppressWarnings("rawtypes")
     private static final List<IRecipeSerializer> RECIPES = new ArrayList<>();
 
     public static final IRecipeSerializer<GlasscuttingRecipe> GLASSCUTTING = register(Reference.MOD_ID + ":glasscutting", new GlasscuttingRecipe.Serializer<>(GlasscuttingRecipe::new));

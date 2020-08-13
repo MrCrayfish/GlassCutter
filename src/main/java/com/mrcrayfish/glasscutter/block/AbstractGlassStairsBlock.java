@@ -15,7 +15,7 @@ import java.util.function.Supplier;
  */
 public class AbstractGlassStairsBlock extends StairsBlock
 {
-    private Supplier<BlockState> state;
+    private final Supplier<BlockState> state;
 
     public AbstractGlassStairsBlock(Supplier<BlockState> state, Properties properties)
     {

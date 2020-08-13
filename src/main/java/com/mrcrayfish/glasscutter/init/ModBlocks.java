@@ -79,7 +79,7 @@ public class ModBlocks
     {
         IForgeRegistry<Block> registry = event.getRegistry();
         BLOCKS.forEach(registry::register);
-        BLOCKS.clear();;
+        BLOCKS.clear();
     }
 
     @SubscribeEvent
@@ -88,6 +88,6 @@ public class ModBlocks
     {
         IForgeRegistry<Item> registry = event.getRegistry();
         ITEMS.forEach(registry::register);
-        ITEMS.clear();;
+        ITEMS.clear();
     }
 }

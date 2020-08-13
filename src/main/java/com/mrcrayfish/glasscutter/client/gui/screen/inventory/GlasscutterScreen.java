@@ -31,7 +31,6 @@ public class GlasscutterScreen extends ContainerScreen<GlasscutterContainer>
     private boolean clickOnScrollBar;
     private int recipeIndexOffset;
     private boolean hasItemsInInputSlot;
-    private static final Logger LOGGER = LogManager.getLogger();
 
     public GlasscutterScreen(GlasscutterContainer container, PlayerInventory playerInventory, ITextComponent titleIn)
     {

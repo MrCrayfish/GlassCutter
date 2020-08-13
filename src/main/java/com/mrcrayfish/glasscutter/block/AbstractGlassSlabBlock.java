@@ -1,17 +1,13 @@
 package com.mrcrayfish.glasscutter.block;
 
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
 import net.minecraft.block.SlabBlock;
-import net.minecraft.entity.EntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import java.util.Properties;
 import java.util.function.Supplier;
 
 /**
@@ -52,18 +48,6 @@ public class AbstractGlassSlabBlock extends SlabBlock
     {
         return true;
     }
-
-//    @Override
-//    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos)
-//    {
-//        return false;
-//    }
-
-//    @Override
-//    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos)
-//    {
-//        return false;
-//    }
 
     @Override
     public boolean canSpawnInBlock() {

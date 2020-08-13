@@ -2,7 +2,6 @@ package com.mrcrayfish.glasscutter.block;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
-import net.minecraft.entity.EntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -61,26 +60,8 @@ public class AbstractGlassStairsBlock extends StairsBlock
         return true;
     }
 
-//    @Override
-    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos)
-    {
-        return false;
-    }
-
     @Override
     public boolean canSpawnInBlock() {
-        return false;
-    }
-
-    //  @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos)
-    {
-        return false;
-    }
-
-    //@Override
-    public boolean canEntitySpawn(BlockState state, IBlockReader worldIn, BlockPos pos, EntityType<?> type)
-    {
         return false;
     }
 }

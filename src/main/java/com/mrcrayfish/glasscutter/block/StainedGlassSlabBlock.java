@@ -11,7 +11,7 @@ import java.util.function.Supplier;
  */
 public class StainedGlassSlabBlock extends AbstractGlassSlabBlock implements IBeaconBeamColorProvider
 {
-    private DyeColor color;
+    private final DyeColor color;
 
     public StainedGlassSlabBlock(DyeColor color, Supplier<BlockState> state, Properties properties)
     {

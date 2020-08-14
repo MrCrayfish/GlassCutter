@@ -2,7 +2,6 @@ package com.mrcrayfish.glasscutter.block;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SlabBlock;
-import net.minecraft.entity.EntityType;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockReader;
@@ -16,7 +15,7 @@ import java.util.function.Supplier;
  */
 public class AbstractGlassSlabBlock extends SlabBlock
 {
-    private Supplier<BlockState> state;
+    private final Supplier<BlockState> state;
 
     public AbstractGlassSlabBlock(Supplier<BlockState> state, Properties properties)
     {
@@ -30,6 +29,7 @@ public class AbstractGlassSlabBlock extends SlabBlock
         return true;
     }
 
+    // Help, what should I use instead???!
     @Override
     @OnlyIn(Dist.CLIENT)
     public boolean isSideInvisible(BlockState state, BlockState adjacentState, Direction side)
@@ -37,6 +37,7 @@ public class AbstractGlassSlabBlock extends SlabBlock
         return (adjacentState.getBlock() == this && adjacentState.get(TYPE) == state.get(TYPE)) || adjacentState.getBlock() == this.state.get().getBlock() || super.isSideInvisible(state, adjacentState, side);
     }
 
+    // Help, what should I use instead???!
     @Override
     @OnlyIn(Dist.CLIENT)
     public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos)
@@ -51,20 +52,7 @@ public class AbstractGlassSlabBlock extends SlabBlock
     }
 
     @Override
-    public boolean causesSuffocation(BlockState state, IBlockReader worldIn, BlockPos pos)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean isNormalCube(BlockState state, IBlockReader worldIn, BlockPos pos)
-    {
-        return false;
-    }
-
-    @Override
-    public boolean canEntitySpawn(BlockState state, IBlockReader worldIn, BlockPos pos, EntityType<?> type)
-    {
+    public boolean canSpawnInBlock() {
         return false;
     }
 }

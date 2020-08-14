@@ -5,7 +5,6 @@ import com.mrcrayfish.glasscutter.init.ModBlocks;
 import com.mrcrayfish.glasscutter.init.ModContainers;
 import com.mrcrayfish.glasscutter.item.crafting.GlasscuttingRecipe;
 import com.mrcrayfish.glasscutter.item.crafting.RecipeType;
-import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.CraftResultInventory;
@@ -229,7 +228,7 @@ public class GlasscutterContainer extends Container
                     return ItemStack.EMPTY;
                 }
             }
-            else if(this.world.getRecipeManager().getRecipe(RecipeType.GLASSCUTTING, new Inventory(new ItemStack[]{slotStack}), this.world).isPresent())
+            else if(this.world.getRecipeManager().getRecipe(RecipeType.GLASSCUTTING, new Inventory(slotStack), this.world).isPresent())
             {
                 if(!this.mergeItemStack(slotStack, 0, 1, false))
                 {

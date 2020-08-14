@@ -1,5 +1,6 @@
 package com.mrcrayfish.glasscutter.client.gui.screen.inventory;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.glasscutter.Reference;
 import com.mrcrayfish.glasscutter.inventory.container.GlasscutterContainer;
@@ -14,6 +15,8 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
@@ -33,41 +36,53 @@ public class GlasscutterScreen extends ContainerScreen<GlasscutterContainer>
     {
         super(container, playerInventory, titleIn);
         container.setInventoryUpdateListener(this::onInventoryUpdate);
+        --this.field_238743_q_;
     }
 
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks)
+    public void func_230430_a_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
+             // render
     {
-        super.render(mouseX, mouseY, partialTicks);
-        this.renderHoveredToolTip(mouseX, mouseY);
+        super.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
+        this.func_238653_a_(matrixStack, null, mouseX, mouseY); // Render ToolTip
     }
 
+/*
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
+    protected void func_230459_a_(MatrixStack matrixStack, int mouseX, int mouseY)
+                // drawGuiContainerForegroundLayer
     {
-        this.font.drawString(this.title.getFormattedText(), 8.0F, 4.0F, 4210752);
-        this.font.drawString(this.playerInventory.getDisplayName().getFormattedText(), 8.0F, (float) (this.ySize - 94), 4210752);
+        //   font renderer   drawString
+        this.field_230712_o_.func_238407_a_(matrixStack, this.field_230704_d_.func_230532_e_(), 8.0F, 4.0F, 4210752);
+        this.field_230712_o_.func_238407_a_(matrixStack, this.playerInventory.getDisplayName().func_230532_e_(), 8.0F, (float) (this.ySize - 94), 4210752);
     }
+*/
 
-    @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
+    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY)
+                // drawGuiContainerBackgroundLayer
     {
-        this.renderBackground();
+        // this.renderBackground();
+        this.func_230446_a_(matrixStack);
         RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.minecraft.getTextureManager().bindTexture(BACKGROUND_TEXTURE);
+        this.field_230706_i_.getTextureManager().bindTexture(BACKGROUND_TEXTURE);
         int guiLeft = this.guiLeft;
         int guiTop = this.guiTop;
-        this.blit(guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
+
+        // Blit
+        this.func_238474_b_(matrixStack, guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
         int scrollBarPos = (int) (41.0F * this.sliderProgress);
-        this.blit(guiLeft + 119, guiTop + 15 + scrollBarPos, 176 + (this.canScroll() ? 0 : 12), 0, 12, 15);
+
+        // Blit
+        this.func_238474_b_(matrixStack, guiLeft + 119, guiTop + 15 + scrollBarPos,
+                176 + (this.canScroll() ? 0 : 12), 0, 12, 15);
         int offsetX = this.guiLeft + 52;
         int offsetY = this.guiTop + 14;
         int indexOffset = this.recipeIndexOffset + 12;
-        this.drawRecipeBackgrounds(mouseX, mouseY, offsetX, offsetY, indexOffset);
+        this.drawRecipeBackgrounds(matrixStack, mouseX, mouseY, offsetX, offsetY, indexOffset);
         this.drawRecipeItems(offsetX, offsetY, indexOffset);
     }
 
-    private void drawRecipeBackgrounds(int mouseX, int mouseY, int offsetX, int offsetY, int indexOffset)
+    private void drawRecipeBackgrounds(MatrixStack matrixStack, int mouseX, int mouseY, int offsetX, int offsetY, int indexOffset)
     {
         for(int i = this.recipeIndexOffset; i < indexOffset && i < this.container.getRecipeListSize(); ++i)
         {
@@ -83,7 +98,9 @@ public class GlasscutterScreen extends ContainerScreen<GlasscutterContainer>
             {
                 vOffset += 36;
             }
-            this.blit(recipeOffsetX, recipeOffsetY - 1, 0, vOffset, 16, 18);
+
+            // Blit
+            this.func_238468_a_(matrixStack, recipeOffsetX, recipeOffsetY - 1, 0, vOffset, 16, 18);
         }
     }
 
@@ -95,12 +112,13 @@ public class GlasscutterScreen extends ContainerScreen<GlasscutterContainer>
             int index = i - this.recipeIndexOffset;
             int recipeOffsetX = offsetX + index % 4 * 16;
             int recipeOffsetY = offsetY + (index / 4) * 18 + 2;
-            this.minecraft.getItemRenderer().renderItemAndEffectIntoGUI(list.get(i).getRecipeOutput(), recipeOffsetX, recipeOffsetY);
+            this.field_230706_i_.getItemRenderer().renderItemAndEffectIntoGUI(list.get(i).getRecipeOutput(), recipeOffsetX, recipeOffsetY);
         }
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int button)
+    public boolean func_231044_a_(double mouseX, double mouseY, int button)
+                // mouseClicked
     {
         this.clickOnScrollBar = false;
         if(this.hasItemsInInputSlot)
@@ -114,10 +132,10 @@ public class GlasscutterScreen extends ContainerScreen<GlasscutterContainer>
                 int index = i - this.recipeIndexOffset;
                 double mouseRelativeX = mouseX - (double) (recipeOffsetX + index % 4 * 16);
                 double mouseRelativeY = mouseY - (double) (recipeOffsetY + index / 4 * 18);
-                if(mouseRelativeX >= 0.0D && mouseRelativeY >= 0.0D && mouseRelativeX < 16.0D && mouseRelativeY < 18.0D && this.container.enchantItem(this.minecraft.player, i))
+                if(mouseRelativeX >= 0.0D && mouseRelativeY >= 0.0D && mouseRelativeX < 16.0D && mouseRelativeY < 18.0D && this.container.enchantItem(this.field_230706_i_.player, i))
                 {
                     Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
-                    this.minecraft.playerController.sendEnchantPacket((this.container).windowId, i);
+                    this.field_230706_i_.playerController.sendEnchantPacket((this.container).windowId, i);
                     return true;
                 }
             }
@@ -130,11 +148,12 @@ public class GlasscutterScreen extends ContainerScreen<GlasscutterContainer>
             }
         }
 
-        return super.mouseClicked(mouseX, mouseY, button);
+        return super.func_231044_a_(mouseX, mouseY, button);
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY)
+    public boolean func_231045_a_(double mouseX, double mouseY, int button, double deltaX, double deltaY)
+                // mouseDragged
     {
         if(this.clickOnScrollBar && this.canScroll())
         {
@@ -147,12 +166,13 @@ public class GlasscutterScreen extends ContainerScreen<GlasscutterContainer>
         }
         else
         {
-            return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+            return super.func_231045_a_(mouseX, mouseY, button, deltaX, deltaY);
         }
     }
 
     @Override
-    public boolean mouseScrolled(double mouseX, double mouseY, double distance)
+    public boolean func_231043_a_(double mouseX, double mouseY, double distance)
+                // mouseScrolled
     {
         if(this.canScroll())
         {

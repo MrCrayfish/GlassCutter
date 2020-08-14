@@ -11,7 +11,7 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
 
-version = '1.1.0-1.16.1'
+version = "1.1.0-${mc_version}"
 group = 'com.mrcrayfish'
 archivesBaseName = 'glasscutter'
 
@@ -70,8 +70,7 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:${mc_version}-32.0.108"
-
+    minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     compile fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
 }
 

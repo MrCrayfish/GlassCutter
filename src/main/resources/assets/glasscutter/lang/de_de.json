@@ -34,5 +34,7 @@
     "block.glasscutter.light_blue_stained_glass_slab": "Hellblaue Glasstufe",
     "block.glasscutter.magenta_stained_glass_slab": "Magenta Glasstufe",
     "block.glasscutter.orange_stained_glass_slab": "Orange Glasstufe",
-    "block.glasscutter.white_stained_glass_slab": "Wei\u00dfe Glasstufe"
+    "block.glasscutter.white_stained_glass_slab": "Wei\u00dfe Glasstufe",
+
+    "gui.jei.category.glassCutting": "Glasschneiden"
 }

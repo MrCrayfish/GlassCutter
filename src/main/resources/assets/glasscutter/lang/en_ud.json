@@ -34,5 +34,7 @@
     "block.glasscutter.light_blue_stained_glass_slab": "q\u0250\ua781S ss\u0250\ua781\u2141 p\u01ddu\u1d09\u0250\u0287S \u01ddn\ua781\u15fa \u0287\u0265\u1d77\u1d09\ua780",
     "block.glasscutter.magenta_stained_glass_slab": "q\u0250\ua781S ss\u0250\ua781\u2141 p\u01ddu\u1d09\u0250\u0287S \u0250\u0287u\u01dd\u1d77\u0250W",
     "block.glasscutter.orange_stained_glass_slab": "q\u0250\ua781S ss\u0250\ua781\u2141 p\u01ddu\u1d09\u0250\u0287S \u01dd\u1d77u\u0250\u0279O",
-    "block.glasscutter.white_stained_glass_slab": "q\u0250\ua781S ss\u0250\ua781\u2141 p\u01ddu\u1d09\u0250\u0287S \u01dd\u0287\u1d09\u0265M"
+    "block.glasscutter.white_stained_glass_slab": "q\u0250\ua781S ss\u0250\ua781\u2141 p\u01ddu\u1d09\u0250\u0287S \u01dd\u0287\u1d09\u0265M",
+
+    "gui.jei.category.glassCutting": "\u1d77u\u1d09\u0287\u0287n\u0254ss\u0250\ua781\u2141"
 }

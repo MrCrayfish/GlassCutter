@@ -6,6 +6,10 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_1_8
 targetCompatibility = JavaVersion.VERSION_1_8
 
+version = "1.1.0-${mc_version}"
+group = 'com.mrcrayfish'
+archivesBaseName = 'glasscutter'
+
 archivesBaseName = project.archives_base_name
 version = project.mod_version
 group = project.maven_group
@@ -49,7 +53,6 @@ tasks.withType(JavaCompile) {
 task sourcesJar(type: Jar, dependsOn: classes) {
     classifier = "sources"
     from sourceSets.main.allSource
-}
 
 jar {
     from "LICENSE"

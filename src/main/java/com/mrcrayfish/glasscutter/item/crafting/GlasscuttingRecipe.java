@@ -3,87 +3,77 @@ package com.mrcrayfish.glasscutter.item.crafting;
 import com.google.gson.JsonObject;
 import com.mrcrayfish.glasscutter.init.ModBlocks;
 import com.mrcrayfish.glasscutter.init.ModRecipeSerializers;
-import net.minecraft.inventory.IInventory;
+import com.mrcrayfish.glasscutter.init.ModRecipeTypes;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.inventory.Inventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.item.crafting.Ingredient;
-import net.minecraft.item.crafting.SingleItemRecipe;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.JSONUtils;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.network.PacketByteBuf;
+import net.minecraft.recipe.CuttingRecipe;
+import net.minecraft.recipe.Ingredient;
+import net.minecraft.recipe.RecipeSerializer;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.JsonHelper;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 /**
- * Author: MrCrayfish
+ * @author justAm0dd3r
  */
-public class GlasscuttingRecipe extends SingleItemRecipe
-{
-    public GlasscuttingRecipe(ResourceLocation id, String group, Ingredient ingredient, ItemStack stack)
-    {
-        super(RecipeType.GLASSCUTTING, ModRecipeSerializers.GLASSCUTTING, id, group, ingredient, stack);
-    }
+public class GlasscuttingRecipe extends CuttingRecipe {
+   public GlasscuttingRecipe(Identifier id, String group, Ingredient input, ItemStack output) {
+      super(ModRecipeTypes.GLASSCUTTING, ModRecipeSerializers.GLASSCUTTING, id, group, input, output);
+   }
 
-    @Override
-    public boolean matches(IInventory inventory, World world)
-    {
-        return this.ingredient.test(inventory.getStackInSlot(0));
-    }
+   @Override
+   public boolean matches(Inventory inv, World world) {
+      return this.input.test(inv.getStack(0));
+   }
 
-    @Override
-    public ItemStack getIcon()
-    {
-        return new ItemStack(ModBlocks.GLASSCUTTER);
-    }
+   @Override
+   @Environment(EnvType.CLIENT)
+   public ItemStack getRecipeKindIcon() {
+      return new ItemStack(ModBlocks.GLASSCUTTER);
+   }
 
-    public static class Serializer<T extends GlasscuttingRecipe> extends net.minecraftforge.registries.ForgeRegistryEntry<IRecipeSerializer<?>> implements IRecipeSerializer<T>
-    {
-        private final GlasscuttingRecipe.Serializer.IRecipeFactory<T> factory;
+   public static class Serializer implements RecipeSerializer<GlasscuttingRecipe> {
+      private final RecipeFactory<GlasscuttingRecipe> recipeFactory;
 
-        public Serializer(GlasscuttingRecipe.Serializer.IRecipeFactory<T> factory)
-        {
-            this.factory = factory;
-        }
+      public Serializer(RecipeFactory<GlasscuttingRecipe> recipeFactory) {
+         this.recipeFactory = recipeFactory;
+      }
 
-        @Override
-        public T read(ResourceLocation recipeId, JsonObject json)
-        {
-            String group = JSONUtils.getString(json, "group", "");
-            Ingredient ingredient;
-            if(JSONUtils.isJsonArray(json, "ingredient"))
-            {
-                ingredient = Ingredient.deserialize(JSONUtils.getJsonArray(json, "ingredient"));
-            }
-            else
-            {
-                ingredient = Ingredient.deserialize(JSONUtils.getJsonObject(json, "ingredient"));
-            }
-            String result = JSONUtils.getString(json, "result");
-            int count = JSONUtils.getInt(json, "count");
-            ItemStack stack = new ItemStack(Registry.ITEM.getOrDefault(new ResourceLocation(result)), count);
-            return this.factory.create(recipeId, group, ingredient, stack);
-        }
+      public GlasscuttingRecipe read(Identifier identifier, JsonObject jsonObject) {
+         String string = JsonHelper.getString(jsonObject, "group", "");
+         Ingredient ingredient2;
+         if (JsonHelper.hasArray(jsonObject, "ingredient")) {
+            ingredient2 = Ingredient.fromJson(JsonHelper.getArray(jsonObject, "ingredient"));
+         } else {
+            ingredient2 = Ingredient.fromJson(JsonHelper.getObject(jsonObject, "ingredient"));
+         }
 
-        @Override
-        public T read(ResourceLocation recipeId, PacketBuffer buffer)
-        {
-            String group = buffer.readString(32767);
-            Ingredient ingredient = Ingredient.read(buffer);
-            ItemStack stack = buffer.readItemStack();
-            return this.factory.create(recipeId, group, ingredient, stack);
-        }
+         String string2 = JsonHelper.getString(jsonObject, "result");
+         int i = JsonHelper.getInt(jsonObject, "count");
+         ItemStack itemStack = new ItemStack(Registry.ITEM.get(new Identifier(string2)), i);
+         return this.recipeFactory.create(identifier, string, ingredient2, itemStack);
+      }
 
-        @Override
-        public void write(PacketBuffer buffer, T recipe)
-        {
-            buffer.writeString(recipe.group);
-            recipe.ingredient.write(buffer);
-            buffer.writeItemStack(recipe.result);
-        }
+      public GlasscuttingRecipe read(Identifier identifier, PacketByteBuf packetByteBuf) {
+         String string = packetByteBuf.readString(32767);
+         Ingredient ingredient = Ingredient.fromPacket(packetByteBuf);
+         ItemStack itemStack = packetByteBuf.readItemStack();
+         return this.recipeFactory.create(identifier, string, ingredient, itemStack);
+      }
 
-        public interface IRecipeFactory<T extends GlasscuttingRecipe>
-        {
-            T create(ResourceLocation id, String group, Ingredient ingredient, ItemStack stack);
-        }
-    }
+      public void write(PacketByteBuf packetByteBuf, GlasscuttingRecipe recipe) {
+         packetByteBuf.writeString(recipe.group);
+         recipe.input.write(packetByteBuf);
+         packetByteBuf.writeItemStack(recipe.output);
+      }
+
+      public interface RecipeFactory<GlasscuttingRecipe> {
+         GlasscuttingRecipe create(Identifier identifier, String string, Ingredient ingredient, ItemStack itemStack);
+      }
+   }
+
 }

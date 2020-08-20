@@ -1,6 +1,7 @@
 package com.mrcrayfish.glasscutter.block;
 
 import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 
 import java.util.function.Supplier;
 
@@ -9,8 +10,8 @@ import java.util.function.Supplier;
  */
 public class GlassStairsBlock extends AbstractGlassStairsBlock
 {
-    public GlassStairsBlock(Supplier<BlockState> state, Properties properties)
+    public GlassStairsBlock(Settings settings)
     {
-        super(state, properties);
+        super(Blocks.GLASS.getDefaultState(), settings);
     }
 }

@@ -7,8 +7,8 @@ import net.minecraft.block.Blocks;
  */
 public class GlassSlabBlock extends AbstractGlassSlabBlock
 {
-    public GlassSlabBlock(Properties properties)
+    public GlassSlabBlock(Settings settings)
     {
-        super(Blocks.GLASS::getDefaultState, properties);
+        super(Blocks.GLASS.getDefaultState(), settings);
     }
 }

@@ -1,58 +1,48 @@
 package com.mrcrayfish.glasscutter.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.util.Direction;
+import com.mrcrayfish.glasscutter.init.ModBlocks;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.block.*;
+import net.minecraft.block.enums.BlockHalf;
+import net.minecraft.block.enums.SlabType;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.function.Supplier;
+import net.minecraft.util.math.Direction;
+import net.minecraft.util.shape.VoxelShape;
+import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.BlockView;
 
 /**
  * Author: MrCrayfish
  */
 public class AbstractGlassSlabBlock extends SlabBlock
 {
-    private final Supplier<BlockState> state;
+    private final BlockState state;
 
-    public AbstractGlassSlabBlock(Supplier<BlockState> state, Properties properties)
+    public AbstractGlassSlabBlock(BlockState state, Settings settings)
     {
-        super(properties);
+        super(settings.nonOpaque().allowsSpawning((a, b, c, d) -> false));
         this.state = state;
     }
 
     @Override
-    public boolean isTransparent(BlockState state)
-    {
+    public VoxelShape getVisualShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
+        return VoxelShapes.empty();
+    }
+
+    @Override
+    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
         return true;
     }
 
-    // Help, what should I use instead???!
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public boolean isSideInvisible(BlockState state, BlockState adjacentState, Direction side)
-    {
-        return (adjacentState.getBlock() == this && adjacentState.get(TYPE) == state.get(TYPE)) || adjacentState.getBlock() == this.state.get().getBlock() || super.isSideInvisible(state, adjacentState, side);
-    }
-
-    // Help, what should I use instead???!
-    @Override
-    @OnlyIn(Dist.CLIENT)
-    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos)
+    public float getAmbientOcclusionLightLevel(BlockState state, BlockView worldIn, BlockPos pos)
     {
         return 1.0F;
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos)
-    {
-        return true;
-    }
-
-    @Override
-    public boolean canSpawnInBlock() {
+    public boolean canMobSpawnInside() {
         return false;
     }
 }

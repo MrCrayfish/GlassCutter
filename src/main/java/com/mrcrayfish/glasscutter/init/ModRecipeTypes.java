@@ -6,6 +6,9 @@ import net.minecraft.recipe.RecipeType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+/**
+ * @author justAm0dd3r
+ */
 public class ModRecipeTypes {
     public static RecipeType<GlasscuttingRecipe> GLASSCUTTING;
 

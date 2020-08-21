@@ -8,6 +8,9 @@ import net.fabricmc.fabric.api.screenhandler.v1.ScreenHandlerRegistry;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.util.Identifier;
 
+/**
+ * @author justAm0dd3r
+ */
 public class ModScreenHandlers {
     public static ScreenHandlerType<GlasscutterScreenHandler> GLASSCUTTER;
 

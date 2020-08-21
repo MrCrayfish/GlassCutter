@@ -6,6 +6,9 @@ import net.minecraft.recipe.RecipeSerializer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+/**
+ * @author justAm0dd3r
+ */
 public class ModRecipeSerializers {
     public static RecipeSerializer<GlasscuttingRecipe> GLASSCUTTING;
 

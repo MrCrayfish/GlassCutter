@@ -25,6 +25,9 @@ import net.minecraft.world.World;
 
 import java.util.List;
 
+/**
+ * @author justAm0dd3r
+ */
 public class GlasscutterScreenHandler extends ScreenHandler {
    private final ScreenHandlerContext context;
    private final Property selectedRecipe;

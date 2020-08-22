@@ -1,21 +1,19 @@
 package com.mrcrayfish.glasscutter.block;
 
 import net.minecraft.block.BlockState;
-import net.minecraft.block.IBeaconBeamColorProvider;
-import net.minecraft.item.DyeColor;
-
-import java.util.function.Supplier;
+import net.minecraft.block.Stainable;
+import net.minecraft.util.DyeColor;
 
 /**
  * Author: MrCrayfish
  */
-public class StainedGlassStairsBlock extends AbstractGlassStairsBlock implements IBeaconBeamColorProvider
+public class StainedGlassStairsBlock extends AbstractGlassStairsBlock implements Stainable
 {
     private final DyeColor color;
 
-    public StainedGlassStairsBlock(DyeColor color, Supplier<BlockState> state, Properties properties)
+    public StainedGlassStairsBlock(DyeColor color, BlockState state, Settings settings)
     {
-        super(state, properties);
+        super(state, settings);
         this.color = color;
     }
 

@@ -1,207 +1,189 @@
 package com.mrcrayfish.glasscutter.client.gui.screen.inventory;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mrcrayfish.glasscutter.Reference;
-import com.mrcrayfish.glasscutter.inventory.container.GlasscutterContainer;
 import com.mrcrayfish.glasscutter.item.crafting.GlasscuttingRecipe;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.SimpleSound;
-import net.minecraft.client.gui.screen.inventory.ContainerScreen;
+import com.mrcrayfish.glasscutter.screen_handler.GlasscutterScreenHandler;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.screen.ingame.HandledScreen;
+import net.minecraft.client.sound.PositionedSoundInstance;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvents;
+import net.minecraft.sound.SoundEvents;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.util.List;
 
 /**
- * Author: MrCrayfish
+ * Glasscutter screen. Only client side.
+ *
+ * @author justAm0dd3r
  */
-@OnlyIn(Dist.CLIENT)
-public class GlasscutterScreen extends ContainerScreen<GlasscutterContainer>
-{
-    private static final ResourceLocation BACKGROUND_TEXTURE = new ResourceLocation(Reference.MOD_ID, "textures/gui/container/glasscutter.png");
-    private float sliderProgress;
-    private boolean clickOnScrollBar;
-    private int recipeIndexOffset;
-    private boolean hasItemsInInputSlot;
+@Environment(EnvType.CLIENT)
+public class GlasscutterScreen extends HandledScreen<GlasscutterScreenHandler> {
+   private static final Identifier TEXTURE = new Identifier(Reference.MOD_ID, "textures/gui/container/glasscutter.png");
+   private float scrollAmount;
+   private boolean mouseClicked;
+   private int scrollOffset;
+   private boolean canCraft;
 
-    public GlasscutterScreen(GlasscutterContainer container, PlayerInventory playerInventory, ITextComponent titleIn)
-    {
-        super(container, playerInventory, titleIn);
-        container.setInventoryUpdateListener(this::onInventoryUpdate);
-        --this.field_238743_q_;
-    }
+   public GlasscutterScreen(GlasscutterScreenHandler handler, PlayerInventory inventory, Text title) {
+      super(handler, inventory, title);
+      handler.setContentsChangedListener(this::onInventoryChange);
+      --this.titleY;
+   }
 
-    @Override
-    public void func_230430_a_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks)
-             // render
-    {
-        super.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
-        this.func_238653_a_(matrixStack, null, mouseX, mouseY); // Render ToolTip
-    }
+   public void render(MatrixStack matrices, int mouseX, int mouseY, float delta) {
+      super.render(matrices, mouseX, mouseY, delta);
+      this.drawMouseoverTooltip(matrices, mouseX, mouseY);
+   }
 
-/*
-    @Override
-    protected void func_230459_a_(MatrixStack matrixStack, int mouseX, int mouseY)
-                // drawGuiContainerForegroundLayer
-    {
-        //   font renderer   drawString
-        this.field_230712_o_.func_238407_a_(matrixStack, this.field_230704_d_.func_230532_e_(), 8.0F, 4.0F, 4210752);
-        this.field_230712_o_.func_238407_a_(matrixStack, this.playerInventory.getDisplayName().func_230532_e_(), 8.0F, (float) (this.ySize - 94), 4210752);
-    }
-*/
+   /**
+    * Draw the background.
+    */
+   protected void drawBackground(MatrixStack matrices, float delta, int mouseX, int mouseY) {
+      this.renderBackground(matrices);
+      RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
+      assert this.client != null;
+      this.client.getTextureManager().bindTexture(TEXTURE);
+      int i = this.x;
+      int j = this.y;
+      this.drawTexture(matrices, i, j, 0, 0, this.backgroundWidth, this.backgroundHeight);
+      int k = (int)(41.0F * this.scrollAmount);
+      this.drawTexture(matrices, i + 119, j + 15 + k, 176 + (this.shouldScroll() ? 0 : 12), 0, 12, 15);
+      int l = this.x + 52;
+      int m = this.y + 14;
+      int n = this.scrollOffset + 12;
+      this.renderRecipeBackground(matrices, mouseX, mouseY, l, m, n);
+      this.renderRecipeIcons(l, m, n);
+   }
 
-    protected void func_230450_a_(MatrixStack matrixStack, float partialTicks, int mouseX, int mouseY)
-                // drawGuiContainerBackgroundLayer
-    {
-        // this.renderBackground();
-        this.func_230446_a_(matrixStack);
-        RenderSystem.color4f(1.0F, 1.0F, 1.0F, 1.0F);
-        this.field_230706_i_.getTextureManager().bindTexture(BACKGROUND_TEXTURE);
-        int guiLeft = this.guiLeft;
-        int guiTop = this.guiTop;
+   protected void drawMouseoverTooltip(MatrixStack matrices, int x, int y) {
+      super.drawMouseoverTooltip(matrices, x, y);
+      if (this.canCraft) {
+         int i = this.x + 52;
+         int j = this.y + 14;
+         int k = this.scrollOffset + 12;
+         List<GlasscuttingRecipe> list = this.handler.getAvailableRecipes();
 
-        // Blit
-        this.func_238474_b_(matrixStack, guiLeft, guiTop, 0, 0, this.xSize, this.ySize);
-        int scrollBarPos = (int) (41.0F * this.sliderProgress);
-
-        // Blit
-        this.func_238474_b_(matrixStack, guiLeft + 119, guiTop + 15 + scrollBarPos,
-                176 + (this.canScroll() ? 0 : 12), 0, 12, 15);
-        int offsetX = this.guiLeft + 52;
-        int offsetY = this.guiTop + 14;
-        int indexOffset = this.recipeIndexOffset + 12;
-        this.drawRecipeBackgrounds(matrixStack, mouseX, mouseY, offsetX, offsetY, indexOffset);
-        this.drawRecipeItems(offsetX, offsetY, indexOffset);
-    }
-
-    private void drawRecipeBackgrounds(MatrixStack matrixStack, int mouseX, int mouseY, int offsetX, int offsetY, int indexOffset)
-    {
-        for(int i = this.recipeIndexOffset; i < indexOffset && i < this.container.getRecipeListSize(); ++i)
-        {
-            int index = i - this.recipeIndexOffset;
-            int recipeOffsetX = offsetX + index % 4 * 16;
-            int recipeOffsetY = offsetY + (index / 4) * 18 + 2;
-            int vOffset = this.ySize;
-            if(i == this.container.getSelectedRecipe())
-            {
-                vOffset += 18;
+         for(int l = this.scrollOffset; l < k && l < this.handler.getAvailableRecipeCount(); ++l) {
+            int m = l - this.scrollOffset;
+            int n = i + m % 4 * 16;
+            int o = j + m / 4 * 18 + 2;
+            if (x >= n && x < n + 16 && y >= o && y < o + 18) {
+               this.renderTooltip(matrices, list.get(l).getOutput(), x, y);
             }
-            else if(mouseX >= recipeOffsetX && mouseY >= recipeOffsetY && mouseX < recipeOffsetX + 16 && mouseY < recipeOffsetY + 18)
-            {
-                vOffset += 36;
+         }
+      }
+
+   }
+
+   private void renderRecipeBackground(MatrixStack matrixStack, int i, int j, int k, int l, int m) {
+      for(int n = this.scrollOffset; n < m && n < this.handler.getAvailableRecipeCount(); ++n) {
+         int o = n - this.scrollOffset;
+         int p = k + o % 4 * 16;
+         int q = o / 4;
+         int r = l + q * 18 + 2;
+         int s = this.backgroundHeight;
+         if (n == this.handler.getSelectedRecipe()) {
+            s += 18;
+         } else if (i >= p && j >= r && i < p + 16 && j < r + 18) {
+            s += 36;
+         }
+
+         this.drawTexture(matrixStack, p, r - 1, 0, s, 16, 18);
+      }
+
+   }
+
+   private void renderRecipeIcons(int x, int y, int scrollOffset) {
+      List<GlasscuttingRecipe> list = this.handler.getAvailableRecipes();
+
+      for(int i = this.scrollOffset; i < scrollOffset && i < this.handler.getAvailableRecipeCount(); ++i) {
+         int j = i - this.scrollOffset;
+         int k = x + j % 4 * 16;
+         int l = j / 4;
+         int m = y + l * 18 + 2;
+         assert this.client != null;
+         this.client.getItemRenderer().renderInGuiWithOverrides(list.get(i).getOutput(), k, m);
+      }
+
+   }
+
+   public boolean mouseClicked(double mouseX, double mouseY, int button) {
+      this.mouseClicked = false;
+      if (this.canCraft) {
+         int i = this.x + 52;
+         int j = this.y + 14;
+         int k = this.scrollOffset + 12;
+
+         for(int l = this.scrollOffset; l < k; ++l) {
+            int m = l - this.scrollOffset;
+            double d = mouseX - (double)(i + m % 4 * 16);
+            double e = mouseY - (double)(j + m / 4 * 18);
+            if (d >= 0.0D && e >= 0.0D && d < 16.0D && e < 18.0D) {
+               assert this.client != null;
+               if (this.handler.onButtonClick(this.client.player, l)) {
+                  MinecraftClient.getInstance().getSoundManager().play(PositionedSoundInstance.master(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
+                  assert this.client.interactionManager != null;
+                  this.client.interactionManager.clickButton(this.handler.syncId, l);
+                  return true;
+               }
             }
+         }
 
-            // Blit
-            this.func_238468_a_(matrixStack, recipeOffsetX, recipeOffsetY - 1, 0, vOffset, 16, 18);
-        }
-    }
+         i = this.x + 119;
+         j = this.y + 9;
+         if (mouseX >= (double)i && mouseX < (double)(i + 12) && mouseY >= (double)j && mouseY < (double)(j + 54)) {
+            this.mouseClicked = true;
+         }
+      }
 
-    private void drawRecipeItems(int offsetX, int offsetY, int indexOffset)
-    {
-        List<GlasscuttingRecipe> list = this.container.getRecipeList();
-        for(int i = this.recipeIndexOffset; i < indexOffset && i < this.container.getRecipeListSize(); ++i)
-        {
-            int index = i - this.recipeIndexOffset;
-            int recipeOffsetX = offsetX + index % 4 * 16;
-            int recipeOffsetY = offsetY + (index / 4) * 18 + 2;
-            this.field_230706_i_.getItemRenderer().renderItemAndEffectIntoGUI(list.get(i).getRecipeOutput(), recipeOffsetX, recipeOffsetY);
-        }
-    }
+      return super.mouseClicked(mouseX, mouseY, button);
+   }
 
-    @Override
-    public boolean func_231044_a_(double mouseX, double mouseY, int button)
-                // mouseClicked
-    {
-        this.clickOnScrollBar = false;
-        if(this.hasItemsInInputSlot)
-        {
-            int recipeOffsetX = this.guiLeft + 52;
-            int recipeOffsetY = this.guiTop + 14;
-            int recipeOffset = this.recipeIndexOffset + 12;
+   public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+      if (this.mouseClicked && this.shouldScroll()) {
+         int i = this.y + 14;
+         int j = i + 54;
+         this.scrollAmount = ((float)mouseY - (float)i - 7.5F) / ((float)(j - i) - 15.0F);
+         this.scrollAmount = MathHelper.clamp(this.scrollAmount, 0.0F, 1.0F);
+         this.scrollOffset = (int)((double)(this.scrollAmount * (float)this.getMaxScroll()) + 0.5D) * 4;
+         return true;
+      } else {
+         return super.mouseDragged(mouseX, mouseY, button, deltaX, deltaY);
+      }
+   }
 
-            for(int i = this.recipeIndexOffset; i < recipeOffset; ++i)
-            {
-                int index = i - this.recipeIndexOffset;
-                double mouseRelativeX = mouseX - (double) (recipeOffsetX + index % 4 * 16);
-                double mouseRelativeY = mouseY - (double) (recipeOffsetY + index / 4 * 18);
-                if(mouseRelativeX >= 0.0D && mouseRelativeY >= 0.0D && mouseRelativeX < 16.0D && mouseRelativeY < 18.0D && this.container.enchantItem(this.field_230706_i_.player, i))
-                {
-                    Minecraft.getInstance().getSoundHandler().play(SimpleSound.master(SoundEvents.UI_STONECUTTER_SELECT_RECIPE, 1.0F));
-                    this.field_230706_i_.playerController.sendEnchantPacket((this.container).windowId, i);
-                    return true;
-                }
-            }
+   public boolean mouseScrolled(double mouseX, double mouseY, double amount) {
+      if (this.shouldScroll()) {
+         int i = this.getMaxScroll();
+         this.scrollAmount = (float)((double)this.scrollAmount - amount / (double)i);
+         this.scrollAmount = MathHelper.clamp(this.scrollAmount, 0.0F, 1.0F);
+         this.scrollOffset = (int)((double)(this.scrollAmount * (float)i) + 0.5D) * 4;
+      }
 
-            recipeOffsetX = this.guiLeft + 119;
-            recipeOffsetY = this.guiTop + 9;
-            if(mouseX >= (double) recipeOffsetX && mouseX < (double) (recipeOffsetX + 12) && mouseY >= (double) recipeOffsetY && mouseY < (double) (recipeOffsetY + 54))
-            {
-                this.clickOnScrollBar = true;
-            }
-        }
+      return true;
+   }
 
-        return super.func_231044_a_(mouseX, mouseY, button);
-    }
+   private boolean shouldScroll() {
+      return this.canCraft && this.handler.getAvailableRecipeCount() > 12;
+   }
 
-    @Override
-    public boolean func_231045_a_(double mouseX, double mouseY, int button, double deltaX, double deltaY)
-                // mouseDragged
-    {
-        if(this.clickOnScrollBar && this.canScroll())
-        {
-            int offsetX = this.guiTop + 14;
-            int width = offsetX + 54;
-            this.sliderProgress = ((float) mouseY - (float) offsetX - 7.5F) / ((float) (width - offsetX) - 15.0F);
-            this.sliderProgress = MathHelper.clamp(this.sliderProgress, 0.0F, 1.0F);
-            this.recipeIndexOffset = (int) ((double) (this.sliderProgress * (float) this.getHiddenRows()) + 0.5D) * 4;
-            return true;
-        }
-        else
-        {
-            return super.func_231045_a_(mouseX, mouseY, button, deltaX, deltaY);
-        }
-    }
+   protected int getMaxScroll() {
+      return (this.handler.getAvailableRecipeCount() + 4 - 1) / 4 - 3;
+   }
 
-    @Override
-    public boolean func_231043_a_(double mouseX, double mouseY, double distance)
-                // mouseScrolled
-    {
-        if(this.canScroll())
-        {
-            int hiddenRowsCount = this.getHiddenRows();
-            this.sliderProgress = (float) ((double) this.sliderProgress - distance / (double) hiddenRowsCount);
-            this.sliderProgress = MathHelper.clamp(this.sliderProgress, 0.0F, 1.0F);
-            this.recipeIndexOffset = (int) ((double) (this.sliderProgress * (float) hiddenRowsCount) + 0.5D) * 4;
-        }
+   private void onInventoryChange() {
+      this.canCraft = this.handler.canCraft();
+      if (!this.canCraft) {
+         this.scrollAmount = 0.0F;
+         this.scrollOffset = 0;
+      }
 
-        return true;
-    }
-
-    private boolean canScroll()
-    {
-        return this.hasItemsInInputSlot && this.container.getRecipeListSize() > 12;
-    }
-
-    private int getHiddenRows()
-    {
-        return (this.container.getRecipeListSize() + 4 - 1) / 4 - 3;
-    }
-
-    private void onInventoryUpdate()
-    {
-        this.hasItemsInInputSlot = this.container.hasItemsInInputSlot();
-        if(!this.hasItemsInInputSlot)
-        {
-            this.sliderProgress = 0.0F;
-            this.recipeIndexOffset = 0;
-        }
-    }
+   }
 }

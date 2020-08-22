@@ -1,16 +1,14 @@
 package com.mrcrayfish.glasscutter.block;
 
-import net.minecraft.block.BlockState;
-
-import java.util.function.Supplier;
+import net.minecraft.block.Blocks;
 
 /**
  * Author: MrCrayfish
  */
 public class GlassStairsBlock extends AbstractGlassStairsBlock
 {
-    public GlassStairsBlock(Supplier<BlockState> state, Properties properties)
+    public GlassStairsBlock(Settings settings)
     {
-        super(state, properties);
+        super(Blocks.GLASS.getDefaultState(), settings);
     }
 }

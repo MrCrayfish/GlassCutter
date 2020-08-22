@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "glasscutter",
+  "version": "${version}",
+
+  "name": "GlassCutter",
+  "description": "Adds a glasscutter to cut different shapes with glass",
+  "credits": "@DarkestArgentum on Twitter for ideas",
+  "authors": [
+    "MrCrayfish",
+    "justAm0dd3r"
+  ],
+  "contact": {
+    "homepage": "http://mrcrayfish.com/mods?id=glasscutter",
+    "sources": "https://github.com/MrCrayfish/GlassCutter"
+  },
+
+  "license": "GPLv3",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.mrcrayfish.glasscutter.GlassCutterMain"
+    ]
+  },
+
+  "depends": {
+    "fabricloader": ">=0.7.4",
+    "fabric": "*"
+  },
+  "suggests": {
+    "flamingo": "*"
+  }
+}

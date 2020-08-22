@@ -1,37 +1,38 @@
 package com.mrcrayfish.glasscutter.block;
 
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
-import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-
-import java.util.function.Supplier;
+import net.minecraft.util.math.Direction;
+import net.minecraft.world.BlockView;
 
 /**
  * Author: MrCrayfish
  */
 public class AbstractGlassStairsBlock extends StairsBlock
 {
-    private final Supplier<BlockState> state;
+    private final BlockState state;
 
-    public AbstractGlassStairsBlock(Supplier<BlockState> state, Properties properties)
+    public AbstractGlassStairsBlock(BlockState state, Settings settings)
     {
-        super(state, properties);
+        super(state, settings.nonOpaque().allowsSpawning((a, b, c, d) -> false));
         this.state = state;
     }
 
     @Override
-    public boolean isTransparent(BlockState state)
-    {
+    public boolean isTranslucent(BlockState state, BlockView world, BlockPos pos) {
         return true;
     }
 
-    // Help, what should I use instead???!
     @Override
-    @OnlyIn(Dist.CLIENT)
+    public boolean hasSidedTransparency(BlockState state) {
+        return true;
+    }
+
+    @Override
+    @Environment(EnvType.CLIENT)
     public boolean isSideInvisible(BlockState state, BlockState adjacentState, Direction side)
     {
         if(adjacentState.getBlock() == this && adjacentState.get(HALF) == state.get(HALF))
@@ -41,7 +42,7 @@ public class AbstractGlassStairsBlock extends StairsBlock
                 return true;
             }
         }
-        if(adjacentState.getBlock() == this.state.get().getBlock())
+        if(adjacentState.getBlock() == this.state.getBlock())
         {
             return true;
         }
@@ -50,20 +51,14 @@ public class AbstractGlassStairsBlock extends StairsBlock
 
     // Help, what should I use instead???!
     @Override
-    @OnlyIn(Dist.CLIENT)
-    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos)
+    @Environment(EnvType.CLIENT)
+    public float getAmbientOcclusionLightLevel(BlockState state, BlockView worldIn, BlockPos pos)
     {
         return 1.0F;
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos)
-    {
+    public boolean canMobSpawnInside() {
         return true;
-    }
-
-    @Override
-    public boolean canSpawnInBlock() {
-        return false;
     }
 }

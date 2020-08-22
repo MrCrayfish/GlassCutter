@@ -4,8 +4,6 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Stainable;
 import net.minecraft.util.DyeColor;
 
-import java.util.function.Supplier;
-
 /**
  * Author: MrCrayfish
  */

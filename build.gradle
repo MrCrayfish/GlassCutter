@@ -18,14 +18,14 @@ archivesBaseName = 'glasscutter'
 sourceCompatibility = targetCompatibility = compileJava.sourceCompatibility = compileJava.targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
 
 minecraft {
-    mappings channel: 'snapshot', version: '20200514-1.16'
+    mappings channel: 'snapshot', version: '20201028-1.16.3'
     runs {
         client {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             mods {
-                examplemod {
+                modid {
                     source sourceSets.main
                 }
             }
@@ -36,7 +36,7 @@ minecraft {
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
             mods {
-                examplemod {
+                modid {
                     source sourceSets.main
                 }
             }
@@ -46,15 +46,17 @@ minecraft {
             workingDirectory project.file('run')
             property 'forge.logging.markers', 'SCAN,REGISTRIES,REGISTRYDUMP'
             property 'forge.logging.console.level', 'debug'
-            args '--mod', 'examplemod', '--all', '--output', file('src/generated/resources/')
+            args '--mod', 'glasscutter', '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
             mods {
-                examplemod {
+                modid {
                     source sourceSets.main
                 }
             }
         }
     }
 }
+
+sourceSets.main.resources { srcDir 'src/generated/resources' }
 
 repositories {
     maven {
@@ -67,11 +69,16 @@ repositories {
         name = "ModMaven"
         url = "https://modmaven.k-4u.nl"
     }
+    maven {
+        url = "https://www.cursemaven.com"
+    }
 }
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     compile fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
+    compile fg.deobf('curse.maven:configured-457570:3291560')
+    compile fg.deobf('curse.maven:catalogue-459701:3285353')
 }
 
 jar {

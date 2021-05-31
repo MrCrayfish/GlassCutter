@@ -1,8 +1,0 @@
-{
-    "type": "glasscutter:glasscutting",
-    "ingredient": {
-        "item": "minecraft:yellow_stained_glass"
-    },
-    "result": "glasscutter:yellow_stained_glass_slab",
-    "count": 2
-}

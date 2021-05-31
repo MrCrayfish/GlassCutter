@@ -1,8 +1,0 @@
-{
-    "type": "glasscutter:glasscutting",
-    "ingredient": {
-        "item": "minecraft:blue_stained_glass"
-    },
-    "result": "minecraft:blue_stained_glass_pane",
-    "count": 3
-}

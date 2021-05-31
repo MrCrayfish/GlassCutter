@@ -21,6 +21,7 @@ import net.minecraft.item.crafting.IRecipe;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 public class GlasscuttingRecipeCategory implements IExtendableRecipeCategory<GlasscuttingRecipe, ICraftingCategoryExtension> {
     private static final int inputSlot = 0;
@@ -45,7 +46,12 @@ public class GlasscuttingRecipeCategory implements IExtendableRecipeCategory<Gla
 
     @Override
     public <R extends GlasscuttingRecipe> void addCategoryExtension(Class<? extends R> recipeClass, Function<R, ? extends ICraftingCategoryExtension> extensionFactory) {
-        extendableHelper.addRecipeExtensionFactory(recipeClass, extensionFactory);
+        //extendableHelper.addRecipeExtensionFactory(recipeClass, extensionFactory);
+    }
+
+    @Override
+    public <R extends GlasscuttingRecipe> void addCategoryExtension(Class<? extends R> recipeClass, Predicate<R> predicate, Function<R, ? extends ICraftingCategoryExtension> extensionFactory) {
+
     }
 
     @Override

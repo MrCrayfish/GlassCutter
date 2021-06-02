@@ -1,28 +1,32 @@
 modLoader="javafml"
-loaderVersion="[31,)"
-
+loaderVersion="[34,)"
+license="GPLv3"
 issueTrackerURL="https://github.com/MrCrayfish/GlassCutter/issues"
 
 [[mods]]
 modId="glasscutter"
-version="1.0.1"
+version="1.1.0"
 displayName="Glasscutter"
 updateJSONURL="https://raw.githubusercontent.com/MrCrayfish/ModUpdates/master/glasscutter/update.json"
 displayURL="https://mrcrayfish.com/mods?id=glasscutter"
-logoFile=""
+logoFile="glasscutter.png"
 credits="@DarkestArgentum on Twitter for ideas"
 authors="MrCrayfish"
-description='Adds a glasscutter to cut different shapes with glass'
+description='This is a simple mod that adds a glass cutter into the game. This block allows you to cut glass into different shapes. This mod adds stairs and slabs for every type of glass.'
 
-[[dependencies.improvedwolves]]
+[[dependencies.glasscutter]]
     modId="forge"
     mandatory=true
-    versionRange="[32,)"
+    versionRange="[34,)"
     ordering="NONE"
     side="BOTH"
-[[dependencies.improvedwolves]]
+[[dependencies.glasscutter]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.16.1]"
+    versionRange="[1.16.3,1.17]"
     ordering="NONE"
     side="BOTH"
+
+[modproperties.glasscutter]
+    catalogueItemIcon="glasscutter:glasscutter" #Optional support for Cataloque mod.
+    configBackground="minecraft:textures/blocks/stone.png" #Optional support for Configured mod.

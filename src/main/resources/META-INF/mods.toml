@@ -13,8 +13,6 @@ logoFile="glasscutter.png"
 credits="@DarkestArgentum on Twitter for ideas"
 authors="MrCrayfish"
 description='This is a simple mod that adds a glass cutter into the game. This block allows you to cut glass into different shapes. This mod adds stairs and slabs for every type of glass.'
-itemIcon="glasscutter:glasscutter" #Optional support for Cataloque mod.
-configBackground="minecraft:textures/blocks/stone.png" #Optional support for Configured mod.
 
 [[dependencies.glasscutter]]
     modId="forge"
@@ -28,3 +26,7 @@ configBackground="minecraft:textures/blocks/stone.png" #Optional support for Con
     versionRange="[1.16.3,1.17]"
     ordering="NONE"
     side="BOTH"
+
+[modproperties.glasscutter]
+    catalogueItemIcon="glasscutter:glasscutter" #Optional support for Cataloque mod.
+    configBackground="minecraft:textures/blocks/stone.png" #Optional support for Configured mod.

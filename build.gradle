@@ -77,8 +77,8 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     compile fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}")
-    compile fg.deobf('curse.maven:configured-457570:3291560')
-    compile fg.deobf('curse.maven:catalogue-459701:3285353')
+    compile fg.deobf('curse.maven:configured-457570:3334897')
+    compile fg.deobf('curse.maven:catalogue-459701:3334740')
 }
 
 jar {

@@ -1,10 +1,10 @@
 package com.mrcrayfish.glasscutter.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SlabBlock;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SlabBlock;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -24,35 +24,33 @@ public class AbstractGlassSlabBlock extends SlabBlock
     }
 
     @Override
-    public boolean isTransparent(BlockState state)
+    public boolean useShapeForLightOcclusion(BlockState state)
     {
         return true;
     }
 
-    // Help, what should I use instead???!
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean isSideInvisible(BlockState state, BlockState adjacentState, Direction side)
+    public boolean skipRendering(BlockState state, BlockState adjacentState, Direction side)
     {
-        return (adjacentState.getBlock() == this && adjacentState.get(TYPE) == state.get(TYPE)) || adjacentState.getBlock() == this.state.get().getBlock() || super.isSideInvisible(state, adjacentState, side);
+        return (adjacentState.getBlock() == this && adjacentState.getValue(TYPE) == state.getValue(TYPE)) || adjacentState.getBlock() == this.state.get().getBlock() || super.skipRendering(state, adjacentState, side);
     }
 
-    // Help, what should I use instead???!
     @Override
     @OnlyIn(Dist.CLIENT)
-    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos)
+    public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos)
     {
         return 1.0F;
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos)
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos)
     {
         return true;
     }
 
     @Override
-    public boolean canSpawnInBlock() {
+    public boolean isPossibleToRespawnInThis() {
         return false;
     }
 }

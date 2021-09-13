@@ -10,10 +10,10 @@ import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.registration.IRecipeCategoryRegistration;
 import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.util.ErrorUtil;
-import net.minecraft.item.DyeColor;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.RecipeManager;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeManager;
+import net.minecraft.resources.ResourceLocation;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -82,7 +82,7 @@ public class GlassCutterJeiPlugin implements IModPlugin {
         JsonObject object = getObjectFromPath(path);
         if (object == null) return;
 
-        IRecipe<?> recipe = RecipeManager.deserializeRecipe(resourceLocation, object);
+        Recipe<?> recipe = RecipeManager.fromJson(resourceLocation, object);
         if (!(recipe instanceof GlasscuttingRecipe)) {
             LOGGER.error("Wrong recipe type.");
             return;

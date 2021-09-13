@@ -2,8 +2,8 @@ package com.mrcrayfish.glasscutter.init;
 
 import com.mrcrayfish.glasscutter.Reference;
 import com.mrcrayfish.glasscutter.inventory.container.GlasscutterContainer;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.ContainerType;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -18,13 +18,13 @@ import java.util.List;
 @Mod.EventBusSubscriber(modid = Reference.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
 public class ModContainers
 {
-    private static final List<ContainerType<?>> CONTAINER_TYPES = new ArrayList<>();
+    private static final List<MenuType<?>> CONTAINER_TYPES = new ArrayList<>();
 
-    public static final ContainerType<GlasscutterContainer> GLASSCUTTER = register(Reference.MOD_ID + ":glasscutter", GlasscutterContainer::new);
+    public static final MenuType<GlasscutterContainer> GLASSCUTTER = register(Reference.MOD_ID + ":glasscutter", GlasscutterContainer::new);
 
-    private static <T extends Container> ContainerType<T> register(String key, ContainerType.IFactory<T> factory)
+    private static <T extends AbstractContainerMenu> MenuType<T> register(String key, MenuType.MenuSupplier<T> factory)
     {
-        ContainerType<T> type = new ContainerType<>(factory);
+        MenuType<T> type = new MenuType<>(factory);
         type.setRegistryName(key);
         CONTAINER_TYPES.add(type);
         return type;
@@ -32,9 +32,9 @@ public class ModContainers
 
     @SubscribeEvent
     @SuppressWarnings("unused")
-    public static void registerTypes(final RegistryEvent.Register<ContainerType<?>> event)
+    public static void registerTypes(final RegistryEvent.Register<MenuType<?>> event)
     {
-        IForgeRegistry<ContainerType<?>> registry = event.getRegistry();
+        IForgeRegistry<MenuType<?>> registry = event.getRegistry();
         CONTAINER_TYPES.forEach(registry::register);
         CONTAINER_TYPES.clear();
     }

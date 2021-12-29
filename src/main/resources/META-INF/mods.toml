@@ -1,5 +1,5 @@
 modLoader="javafml"
-loaderVersion="[38,)"
+loaderVersion="[39,)"
 license="GPLv3"
 issueTrackerURL="https://github.com/MrCrayfish/GlassCutter/issues"
 
@@ -17,13 +17,13 @@ description='This is a simple mod that adds a glass cutter into the game. This b
 [[dependencies.glasscutter]]
     modId="forge"
     mandatory=true
-    versionRange="[38,)"
+    versionRange="[39,)"
     ordering="NONE"
     side="BOTH"
 [[dependencies.glasscutter]]
     modId="minecraft"
     mandatory=true
-    versionRange="[1.18,1.19]"
+    versionRange="[1.18.1,1.19]"
     ordering="NONE"
     side="BOTH"
 

@@ -9,14 +9,14 @@ buildscript {
 }
 apply plugin: 'net.minecraftforge.gradle'
 
-version = "1.1.1-1.18"
+version = "1.1.1-1.18.1"
 group = 'com.mrcrayfish'
 archivesBaseName = 'glasscutter'
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 minecraft {
-    mappings channel: 'official', version: '1.18'
+    mappings channel: 'official', version: '1.18.1'
 
     runs {
         client {
@@ -74,10 +74,10 @@ repositories {
 }
 
 dependencies {
-    minecraft "net.minecraftforge:forge:1.18-38.0.15"
-    implementation fg.deobf("mezz.jei:jei-1.18:9.0.0.40")
-    runtimeOnly fg.deobf('curse.maven:configured-457570:3546349')
-    runtimeOnly fg.deobf('curse.maven:catalogue-459701:3543625')
+    minecraft "net.minecraftforge:forge:1.18.1-39.0.9"
+    implementation fg.deobf("mezz.jei:jei-1.18.1:9.1.1.48")
+    runtimeOnly fg.deobf('curse.maven:configured-457570:3559398')
+    runtimeOnly fg.deobf('curse.maven:catalogue-459701:3559402')
 }
 
 jar {

@@ -1,10 +1,10 @@
 package com.mrcrayfish.glasscutter.block;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.StairsBlock;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.StairBlock;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 /**
  * Author: MrCrayfish
  */
-public class AbstractGlassStairsBlock extends StairsBlock
+public class AbstractGlassStairsBlock extends StairBlock
 {
     private final Supplier<BlockState> state;
 
@@ -24,19 +24,18 @@ public class AbstractGlassStairsBlock extends StairsBlock
     }
 
     @Override
-    public boolean isTransparent(BlockState state)
+    public boolean useShapeForLightOcclusion(BlockState state)
     {
         return true;
     }
 
-    // Help, what should I use instead???!
     @Override
     @OnlyIn(Dist.CLIENT)
-    public boolean isSideInvisible(BlockState state, BlockState adjacentState, Direction side)
+    public boolean skipRendering(BlockState state, BlockState adjacentState, Direction side)
     {
-        if(adjacentState.getBlock() == this && adjacentState.get(HALF) == state.get(HALF))
+        if(adjacentState.getBlock() == this && adjacentState.getValue(HALF) == state.getValue(HALF))
         {
-            if(adjacentState.get(FACING) != state.get(FACING).getOpposite())
+            if(adjacentState.getValue(FACING) != state.getValue(FACING).getOpposite())
             {
                 return true;
             }
@@ -45,25 +44,24 @@ public class AbstractGlassStairsBlock extends StairsBlock
         {
             return true;
         }
-        return super.isSideInvisible(state, adjacentState, side);
+        return super.skipRendering(state, adjacentState, side);
     }
 
-    // Help, what should I use instead???!
     @Override
     @OnlyIn(Dist.CLIENT)
-    public float getAmbientOcclusionLightValue(BlockState state, IBlockReader worldIn, BlockPos pos)
+    public float getShadeBrightness(BlockState state, BlockGetter worldIn, BlockPos pos)
     {
         return 1.0F;
     }
 
     @Override
-    public boolean propagatesSkylightDown(BlockState state, IBlockReader reader, BlockPos pos)
+    public boolean propagatesSkylightDown(BlockState state, BlockGetter reader, BlockPos pos)
     {
         return true;
     }
 
     @Override
-    public boolean canSpawnInBlock() {
+    public boolean isPossibleToRespawnInThis() {
         return false;
     }
 }

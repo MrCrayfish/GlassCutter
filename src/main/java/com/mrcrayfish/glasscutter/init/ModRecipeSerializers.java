@@ -2,9 +2,9 @@ package com.mrcrayfish.glasscutter.init;
 
 import com.mrcrayfish.glasscutter.Reference;
 import com.mrcrayfish.glasscutter.item.crafting.GlasscuttingRecipe;
-import net.minecraft.item.crafting.IRecipe;
-import net.minecraft.item.crafting.IRecipeSerializer;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.item.crafting.Recipe;
+import net.minecraft.world.item.crafting.RecipeSerializer;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -20,11 +20,11 @@ import java.util.List;
 public class ModRecipeSerializers
 {
     @SuppressWarnings("rawtypes")
-    private static final List<IRecipeSerializer> RECIPES = new ArrayList<>();
+    private static final List<RecipeSerializer> RECIPES = new ArrayList<>();
 
-    public static final IRecipeSerializer<GlasscuttingRecipe> GLASSCUTTING = register(Reference.MOD_ID + ":glasscutting", new GlasscuttingRecipe.Serializer<>(GlasscuttingRecipe::new));
+    public static final RecipeSerializer<GlasscuttingRecipe> GLASSCUTTING = register(Reference.MOD_ID + ":glasscutting", new GlasscuttingRecipe.Serializer<>(GlasscuttingRecipe::new));
 
-    private static <T extends IRecipeSerializer<? extends IRecipe<?>>> T register(String name, T t)
+    private static <T extends RecipeSerializer<? extends Recipe<?>>> T register(String name, T t)
     {
         t.setRegistryName(new ResourceLocation(name));
         RECIPES.add(t);
@@ -33,9 +33,9 @@ public class ModRecipeSerializers
 
     @SubscribeEvent
     @SuppressWarnings("unused")
-    public static void registerItems(final RegistryEvent.Register<IRecipeSerializer<?>> event)
+    public static void registerItems(final RegistryEvent.Register<RecipeSerializer<?>> event)
     {
-        IForgeRegistry<IRecipeSerializer<?>> registry = event.getRegistry();
+        IForgeRegistry<RecipeSerializer<?>> registry = event.getRegistry();
         RECIPES.forEach(item -> event.getRegistry().register(item));
         RECIPES.clear();
     }

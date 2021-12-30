@@ -4,21 +4,21 @@ import com.google.common.collect.Lists;
 import com.mrcrayfish.glasscutter.init.ModBlocks;
 import com.mrcrayfish.glasscutter.init.ModContainers;
 import com.mrcrayfish.glasscutter.item.crafting.GlasscuttingRecipe;
-import com.mrcrayfish.glasscutter.item.crafting.RecipeType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.CraftResultInventory;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.inventory.container.Container;
-import net.minecraft.inventory.container.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.IWorldPosCallable;
-import net.minecraft.util.IntReferenceHolder;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.world.World;
+import com.mrcrayfish.glasscutter.item.crafting.ModRecipeType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ResultContainer;
+import net.minecraft.world.Container;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -27,73 +27,73 @@ import java.util.List;
 /**
  * Author: MrCrayfish
  */
-public class GlasscutterContainer extends Container
+public class GlasscutterContainer extends AbstractContainerMenu
 {
-    private final IWorldPosCallable worldPosCallable;
-    private final IntReferenceHolder selectedRecipe;
-    private final World world;
+    private final ContainerLevelAccess worldPosCallable;
+    private final DataSlot selectedRecipe;
+    private final Level world;
     private List<GlasscuttingRecipe> recipes;
     private ItemStack itemStackInput;
     private long lastOnTake;
     private final Slot inputInventorySlot;
     private final Slot outputInventorySlot;
     private Runnable inventoryUpdateListener = () -> {};
-    private final IInventory inputInventory;
-    private final CraftResultInventory inventory;
+    private final Container inputInventory;
+    private final ResultContainer inventory;
 
-    public GlasscutterContainer(int windowId, PlayerInventory playerInventory)
+    public GlasscutterContainer(int windowId, Inventory playerInventory)
     {
-        this(windowId, playerInventory, IWorldPosCallable.DUMMY);
+        this(windowId, playerInventory, ContainerLevelAccess.NULL);
     }
 
-    public GlasscutterContainer(int windowId, PlayerInventory playerInventory, final IWorldPosCallable callable)
+    public GlasscutterContainer(int windowId, Inventory playerInventory, final ContainerLevelAccess callable)
     {
         super(ModContainers.GLASSCUTTER, windowId);
-        this.selectedRecipe = IntReferenceHolder.single();
+        this.selectedRecipe = DataSlot.standalone();
         this.recipes = Lists.newArrayList();
         this.itemStackInput = ItemStack.EMPTY;
-        this.inputInventory = new Inventory(1)
+        this.inputInventory = new SimpleContainer(1)
         {
             @Override
-            public void markDirty()
+            public void setChanged()
             {
-                super.markDirty();
-                GlasscutterContainer.this.onCraftMatrixChanged(this);
+                super.setChanged();
+                GlasscutterContainer.this.slotsChanged(this);
                 GlasscutterContainer.this.inventoryUpdateListener.run();
             }
         };
-        this.inventory = new CraftResultInventory();
+        this.inventory = new ResultContainer();
         this.worldPosCallable = callable;
-        this.world = playerInventory.player.world;
+        this.world = playerInventory.player.level;
         this.inputInventorySlot = this.addSlot(new Slot(this.inputInventory, 0, 20, 33));
         this.outputInventorySlot = this.addSlot(new Slot(this.inventory, 1, 143, 33)
         {
             @Override
-            public boolean isItemValid(ItemStack stack)
+            public boolean mayPlace(ItemStack stack)
             {
                 return false;
             }
 
             @Override
-            public ItemStack onTake(PlayerEntity playerEntity, ItemStack stack)
+            public void onTake(Player playerEntity, ItemStack stack)
             {
-                ItemStack slotStack = GlasscutterContainer.this.inputInventorySlot.decrStackSize(1);
+                ItemStack slotStack = GlasscutterContainer.this.inputInventorySlot.remove(1);
                 if(!slotStack.isEmpty())
                 {
                     GlasscutterContainer.this.updateRecipeResultSlot();
                 }
 
-                stack.getItem().onCreated(stack, playerEntity.world, playerEntity);
-                callable.consume((world, pos) ->
+                stack.getItem().onCraftedBy(stack, playerEntity.level, playerEntity);
+                callable.execute((world, pos) ->
                 {
                     long gameTime = world.getGameTime();
                     if(GlasscutterContainer.this.lastOnTake != gameTime)
                     {
-                        world.playSound(null, pos, SoundEvents.UI_STONECUTTER_TAKE_RESULT, SoundCategory.BLOCKS, 1.0F, 1.0F);
+                        world.playSound(null, pos, SoundEvents.UI_STONECUTTER_TAKE_RESULT, SoundSource.BLOCKS, 1.0F, 1.0F);
                         GlasscutterContainer.this.lastOnTake = gameTime;
                     }
                 });
-                return super.onTake(playerEntity, stack);
+                super.onTake(playerEntity, stack);
             }
         });
 
@@ -110,7 +110,7 @@ public class GlasscutterContainer extends Container
             this.addSlot(new Slot(playerInventory, i, 8 + i * 18, 142));
         }
 
-        this.trackInt(this.selectedRecipe);
+        this.addDataSlot(this.selectedRecipe);
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -134,17 +134,17 @@ public class GlasscutterContainer extends Container
     @OnlyIn(Dist.CLIENT)
     public boolean hasItemsInInputSlot()
     {
-        return this.inputInventorySlot.getHasStack() && !this.recipes.isEmpty();
+        return this.inputInventorySlot.hasItem() && !this.recipes.isEmpty();
     }
 
     @Override
-    public boolean canInteractWith(PlayerEntity playerEntity)
+    public boolean stillValid(Player playerEntity)
     {
-        return isWithinUsableDistance(this.worldPosCallable, playerEntity, ModBlocks.GLASSCUTTER);
+        return stillValid(this.worldPosCallable, playerEntity, ModBlocks.GLASSCUTTER);
     }
 
     @Override
-    public boolean enchantItem(PlayerEntity playerEntity, int index)
+    public boolean clickMenuButton(Player playerEntity, int index)
     {
         if(index >= 0 && index < this.recipes.size())
         {
@@ -155,9 +155,9 @@ public class GlasscutterContainer extends Container
     }
 
     @Override
-    public void onCraftMatrixChanged(IInventory inventory)
+    public void slotsChanged(Container inventory)
     {
-        ItemStack stack = this.inputInventorySlot.getStack();
+        ItemStack stack = this.inputInventorySlot.getItem();
         if(stack.getItem() != this.itemStackInput.getItem())
         {
             this.itemStackInput = stack.copy();
@@ -165,14 +165,14 @@ public class GlasscutterContainer extends Container
         }
     }
 
-    private void updateAvailableRecipes(IInventory inventory, ItemStack stack)
+    private void updateAvailableRecipes(Container inventory, ItemStack stack)
     {
         this.recipes.clear();
         this.selectedRecipe.set(-1);
-        this.outputInventorySlot.putStack(ItemStack.EMPTY);
+        this.outputInventorySlot.set(ItemStack.EMPTY);
         if(!stack.isEmpty())
         {
-            this.recipes = this.world.getRecipeManager().getRecipes(RecipeType.GLASSCUTTING, inventory, this.world);
+            this.recipes = this.world.getRecipeManager().getRecipesFor(ModRecipeType.GLASSCUTTING, inventory, this.world);
         }
     }
 
@@ -182,13 +182,13 @@ public class GlasscutterContainer extends Container
         {
             //TODO fix this
             GlasscuttingRecipe recipe = this.recipes.get(this.selectedRecipe.get());
-            this.outputInventorySlot.putStack(recipe.getCraftingResult(this.inputInventory));
+            this.outputInventorySlot.set(recipe.assemble(this.inputInventory));
         }
         else
         {
-            this.outputInventorySlot.putStack(ItemStack.EMPTY);
+            this.outputInventorySlot.set(ItemStack.EMPTY);
         }
-        this.detectAndSendChanges();
+        this.broadcastChanges();
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -197,78 +197,81 @@ public class GlasscutterContainer extends Container
         this.inventoryUpdateListener = runnable;
     }
 
-    public boolean canMergeSlot(ItemStack stack, Slot slot)
+    public boolean canTakeItemForPickAll(ItemStack stack, Slot slot)
     {
-        return slot.inventory != this.inventory && super.canMergeSlot(stack, slot);
+        return slot.container != this.inventory && super.canTakeItemForPickAll(stack, slot);
     }
 
-    public ItemStack transferStackInSlot(PlayerEntity playerEntity, int index)
+    public ItemStack quickMoveStack(Player playerEntity, int index)
     {
         ItemStack copyStack = ItemStack.EMPTY;
-        Slot slot = this.inventorySlots.get(index);
-        if(slot != null && slot.getHasStack())
+        Slot slot = this.slots.get(index);
+        if(slot != null && slot.hasItem())
         {
-            ItemStack slotStack = slot.getStack();
+            ItemStack slotStack = slot.getItem();
             Item item = slotStack.getItem();
             copyStack = slotStack.copy();
             if(index == 1)
             {
-                item.onCreated(slotStack, playerEntity.world, playerEntity);
-                if(!this.mergeItemStack(slotStack, 2, 38, true))
+                item.onCraftedBy(slotStack, playerEntity.level, playerEntity);
+                if(!this.moveItemStackTo(slotStack, 2, 38, true))
                 {
                     return ItemStack.EMPTY;
                 }
 
-                slot.onSlotChange(slotStack, copyStack);
+                slot.onQuickCraft(slotStack, copyStack);
             }
             else if(index == 0)
             {
-                if(!this.mergeItemStack(slotStack, 2, 38, false))
+                if(!this.moveItemStackTo(slotStack, 2, 38, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(this.world.getRecipeManager().getRecipe(RecipeType.GLASSCUTTING, new Inventory(slotStack), this.world).isPresent())
+            else if(this.world.getRecipeManager().getRecipeFor(ModRecipeType.GLASSCUTTING, new SimpleContainer(slotStack), this.world).isPresent())
             {
-                if(!this.mergeItemStack(slotStack, 0, 1, false))
+                if(!this.moveItemStackTo(slotStack, 0, 1, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
             else if(index < 29)
             {
-                if(!this.mergeItemStack(slotStack, 29, 38, false))
+                if(!this.moveItemStackTo(slotStack, 29, 38, false))
                 {
                     return ItemStack.EMPTY;
                 }
             }
-            else if(index < 38 && !this.mergeItemStack(slotStack, 2, 29, false))
+            else if(index < 38 && !this.moveItemStackTo(slotStack, 2, 29, false))
             {
                 return ItemStack.EMPTY;
             }
 
             if(slotStack.isEmpty())
             {
-                slot.putStack(ItemStack.EMPTY);
+                slot.set(ItemStack.EMPTY);
             }
 
-            slot.onSlotChanged();
+            slot.setChanged();
             if(slotStack.getCount() == copyStack.getCount())
             {
                 return ItemStack.EMPTY;
             }
 
             slot.onTake(playerEntity, slotStack);
-            this.detectAndSendChanges();
+            this.broadcastChanges();
         }
 
         return copyStack;
     }
 
-    public void onContainerClosed(PlayerEntity playerEntity)
+    public void removed(Player playerEntity)
     {
-        super.onContainerClosed(playerEntity);
-        this.inventory.removeStackFromSlot(1);
-        this.worldPosCallable.consume((world, pos) -> this.clearContainer(playerEntity, playerEntity.world, this.inputInventory));
+        super.removed(playerEntity);
+        this.inventory.removeItemNoUpdate(1);
+        this.worldPosCallable.execute((world, pos) -> this.clearContainer(playerEntity, playerEntity.level, this.inputInventory));
+    }
+
+    private void clearContainer(Player playerEntity, Level level, Container inputInventory) {
     }
 }
